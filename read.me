@@ -1,0 +1,7 @@
+To complete the task "Add support for HTTPS requests" in Sprint 2 of the Mithril Gateway project, you can follow these steps:
+
+Obtain an SSL/TLS certificate for your domain. You can obtain a free certificate from Let's Encrypt or purchase one from a certificate authority.
+Configure your Spring Cloud Gateway instance to use HTTPS instead of HTTP. You can do this by configuring the appropriate properties in your application.yaml file, including the port and SSL/TLS configuration.
+Configure your load balancer or reverse proxy (if applicable) to forward HTTPS traffic to your Spring Cloud Gateway instance.
+Test your HTTPS configuration to ensure it is working properly.
+It's important to note that you should also update any clients or applications that use your API to use HTTPS instead of HTTP to maintain secure communication.
