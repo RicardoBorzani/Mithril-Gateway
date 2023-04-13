@@ -1,4 +1,4 @@
-package br.com.prestigge.mithril_gateway;
+package br.com.prestigge.mithrilgateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
