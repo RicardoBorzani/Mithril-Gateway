@@ -1,0 +1,40 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: auth
+          uri: http://localhost:8080/auth-service
+          predicates:
+            - Path=/auth/**
+        - id: user
+          uri: http://localhost:8080/user-service
+          predicates:
+            - Path=/users/**
+        - id: config
+          uri: http://localhost:8080/config-service
+          predicates:
+            - Path=/config/**
+        - id: transactions
+          uri: http://transactions-service:8080
+          predicates:
+            - Path=/transactions/**
+        - id: calculations
+          uri: http://calculations-service:8080
+          predicates:
+            - Path=/calculations/**
+        - id: reports
+          uri: http://reports-service:8080
+          predicates:
+            - Path=/reports/**
+        - id: import
+          uri: http://import-service:8080
+          predicates:
+            - Path=/import/**
+        - id: logs
+          uri: http://logs-service:8080
+          predicates:
+            - Path=/api/logs/**
+        - id: finance
+          uri: http://finance-service:8080
+          predicates:
+            - Path=/finance/**
