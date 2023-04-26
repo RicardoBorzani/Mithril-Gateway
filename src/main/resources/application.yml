@@ -2,39 +2,321 @@ spring:
   cloud:
     gateway:
       routes:
+        # Wizardry-Gatekeeper Auth-Service
         - id: auth
           uri: http://localhost:8080/auth-service
           predicates:
             - Path=/auth/**
+          filters:
+            # circuit breaker configuration
+            - name: CircuitBreaker
+              args:
+                name: authCircuitBreaker
+                fallbackUri: forward:/authFallback
+                requestVolumeThreshold: 5
+                sleepWindowInMilliseconds: 10000
+                errorThresholdPercentage: 50
+            # retry configuration
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY
+            # hystrix configuration
+            - name: Hystrix
+              args:
+                name: authHystrixCommand
+                fallbackUri: forward:/authFallback
+            # request rate limiter configuration
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@apiKeyResolver}"
+                rate-limiter: "#{@apiKeyRateLimiter}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+            # timeout configuration
+            - name: Timeout
+              args:
+                responseTimeout: 2000
+
+        # Wizardry-Gatekeeper User-Service
         - id: user
           uri: http://localhost:8080/user-service
           predicates:
             - Path=/users/**
+          filters:
+            # circuit breaker configuration
+            - name: CircuitBreaker
+              args:
+                name: userCircuitBreaker
+                fallbackUri: forward:/userFallback
+                requestVolumeThreshold: 5
+                sleepWindowInMilliseconds: 10000
+                errorThresholdPercentage: 50
+            # retry configuration
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY
+            # hystrix configuration
+            - name: Hystrix
+              args:
+                name: userHystrixCommand
+                fallbackUri: forward:/userFallback
+            # request rate limiter configuration
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@apiKeyResolver}"
+                rate-limiter: "#{@apiKeyRateLimiter}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+            # timeout configuration
+            - name: Timeout
+              args:
+                responseTimeout: 2000
+
+        # Arcane-HTTPd Config-Service
         - id: config
           uri: http://localhost:8080/config-service
           predicates:
             - Path=/config/**
+          filters:
+            # circuit breaker configuration
+            - name: CircuitBreaker
+              args:
+                name: configCircuitBreaker
+                fallbackUri: forward:/configFallback
+                requestVolumeThreshold: 5
+                sleepWindowInMilliseconds: 10000
+                errorThresholdPercentage: 50
+            # retry configuration
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY
+            # hystrix configuration
+            - name: Hystrix
+              args:
+                name: configHystrixCommand
+                fallbackUri: forward:/configFallback
+            # request rate limiter configuration
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@apiKeyResolver}"
+                rate-limiter: "#{@apiKeyRateLimiter}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+            # timeout configuration
+            - name: Timeout
+              args:
+                responseTimeout: 2000
+
+        #  Ethereal-Spark Transactions-Service
         - id: transactions
-          uri: http://transactions-service:8080
+          uri: http://localhost:8080/transactions-service
           predicates:
             - Path=/transactions/**
+          filters:
+            # circuit breaker configuration
+            - name: CircuitBreaker
+              args:
+                name: transactionsCircuitBreaker
+                fallbackUri: forward:/transactionsFallback
+                requestVolumeThreshold: 5
+                sleepWindowInMilliseconds: 10000
+                errorThresholdPercentage: 50
+            # retry configuration
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY
+            # hystrix configuration
+            - name: Hystrix
+              args:
+                name: transactionsHystrixCommand
+                fallbackUri: forward:/transactionsFallback
+            # request rate limiter configuration
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@apiKeyResolver}"
+                rate-limiter: "#{@apiKeyRateLimiter}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+            # timeout configuration
+            - name: Timeout
+              args:
+                responseTimeout: 2000
+
+        #  Ethereal-Spark Calculations-Service
         - id: calculations
           uri: http://calculations-service:8080
           predicates:
             - Path=/calculations/**
+          filters:
+            # circuit breaker configuration
+            - name: CircuitBreaker
+              args:
+                name: calculationsCircuitBreaker
+                fallbackUri: forward:/calculationsFallback
+                requestVolumeThreshold: 5
+                sleepWindowInMilliseconds: 10000
+                errorThresholdPercentage: 50
+            # retry configuration
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY
+            # hystrix configuration
+            - name: Hystrix
+              args:
+                name: calculationsHystrixCommand
+                fallbackUri: forward:/calculationsFallback
+            # request rate limiter configuration
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@apiKeyResolver}"
+                rate-limiter: "#{@apiKeyRateLimiter}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+            # timeout configuration
+            - name: Timeout
+              args:
+                responseTimeout: 2000
+
+        #  Arcane-HTTPd Reports-Service
         - id: reports
           uri: http://reports-service:8080
           predicates:
             - Path=/reports/**
+          filters:
+            # circuit breaker configuration
+            - name: CircuitBreaker
+              args:
+                name: reportsCircuitBreaker
+                fallbackUri: forward:/reportsFallback
+                requestVolumeThreshold: 5
+                sleepWindowInMilliseconds: 10000
+                errorThresholdPercentage: 50
+            # retry configuration
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY
+            # hystrix configuration
+            - name: Hystrix
+              args:
+                name: reportsHystrixCommand
+                fallbackUri: forward:/reportsFallback
+            # request rate limiter configuration
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@apiKeyResolver}"
+                rate-limiter: "#{@apiKeyRateLimiter}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+            # timeout configuration
+            - name: Timeout
+              args:
+                responseTimeout: 2000
+
+        #  Ethereal-Spark Import-Service
         - id: import
           uri: http://import-service:8080
           predicates:
             - Path=/import/**
+          filters:
+            # circuit breaker configuration
+            - name: CircuitBreaker
+              args:
+                name: importCircuitBreaker
+                fallbackUri: forward:/importFallback
+                requestVolumeThreshold: 5
+                sleepWindowInMilliseconds: 10000
+                errorThresholdPercentage: 50
+            # retry configuration
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY
+            # hystrix configuration
+            - name: Hystrix
+              args:
+                name: importHystrixCommand
+                fallbackUri: forward:/importFallback
+            # request rate limiter configuration
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@apiKeyResolver}"
+                rate-limiter: "#{@apiKeyRateLimiter}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+            # timeout configuration
+            - name: Timeout
+              args:
+                responseTimeout: 2000
+
+        #  Arcane-HTTPd Logs-Service
         - id: logs
           uri: http://logs-service:8080
           predicates:
             - Path=/api/logs/**
+          filters:
+            # circuit breaker configuration
+            - name: CircuitBreaker
+              args:
+                name: logsCircuitBreaker
+                fallbackUri: forward:/logsFallback
+                requestVolumeThreshold: 5
+                sleepWindowInMilliseconds: 10000
+                errorThresholdPercentage: 50
+            # retry configuration
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY
+            # hystrix configuration
+            - name: Hystrix
+              args:
+                name: logsHystrixCommand
+                fallbackUri: forward:/logsFallback
+            # request rate limiter configuration
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@apiKeyResolver}"
+                rate-limiter: "#{@apiKeyRateLimiter}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+            # timeout configuration
+            - name: Timeout
+              args:
+                responseTimeout: 2000
+
+        #  Ethereal-Spark Finance-Service
         - id: finance
           uri: http://finance-service:8080
           predicates:
             - Path=/finance/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: financeCircuitBreaker
+                fallbackUri: forward:/financeFallback
+                requestVolumeThreshold: 10
+                sleepWindowInMilliseconds: 5000
+                errorThresholdPercentage: 50
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY
+            - name: Hystrix
+              args:
+                name: financeHystrixCommand
+                fallbackUri: forward:/financeFallback
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@apiKeyResolver}"
+                rate-limiter: "#{@apiKeyRateLimiter}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+            - name: Timeout
+              args:
+                responseTimeout: 2000
