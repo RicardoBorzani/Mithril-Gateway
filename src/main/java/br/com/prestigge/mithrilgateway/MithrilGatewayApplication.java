@@ -1,20 +1,10 @@
 package br.com.prestigge.mithrilgateway;
 
-import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
-import io.github.resilience4j.timelimiter.TimeLimiterConfig;
-
-import java.time.Duration;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-//import org.springframework.boot.runApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-
-import org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreakerFactory;
-import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder;
-import org.springframework.cloud.client.circuitbreaker.Customizer;
-import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 
@@ -34,17 +24,12 @@ public class MithrilGatewayApplication {
 		SpringApplication.run(MithrilGatewayApplication.class, args);
 	}
 
-	@Bean
-	public RouteLocator myRoutes(RouteLocatorBuilder builder, UriConfiguration uriConfiguration) {
-		String httpUri = uriConfiguration.getHttpbin();
+	//@Autowired
+	//private CircuitBreakerGatewayFilterFactory circuitBreakerFactory;
 
-		CircuitBreakerConfig circuitBreakerConfig = CircuitBreakerConfig.custom()
-				.failureRateThreshold(50)
-				.waitDurationInOpenState(Duration.ofMillis(10000))
-				.permittedNumberOfCallsInHalfOpenState(5)
-				.slidingWindowSize(10)
-				.minimumNumberOfCalls(5)
-				.build();
+	@Bean
+	public RouteLocator customRouteLocator(RouteLocatorBuilder builder, UriConfiguration uriConfiguration) {
+		String httpUri = uriConfiguration.getHttpbin();
 
 		return builder.routes()
 				.route(p -> p
@@ -53,23 +38,11 @@ public class MithrilGatewayApplication {
 								.circuitBreaker(config -> config
 										.setName("authCircuitBreaker")
 										.setFallbackUri("forward:/authFallback")
-										//.setCircuitBreakerConfig(circuitBreakerConfig)
 								)
 								.retry(config -> config
 										.setRetries(3)
-										//.setStatuses(HttpStatus.BAD_GATEWAY)
 								)
-								//.hystrix(config -> config
-										//.setName("authHystrixCommand")
-										//.setFallbackUri("forward:/authFallback")
-								//)
-								//.requestRateLimiter(config -> config
-										//.setKeyResolver(new SpELClientKeyResolver())
-										//.setRateLimiter(new RedisRateLimiter(10, 20))
-								//)
-								//.timeout(config -> config
-										//.setResponseTimeout(Duration.ofMillis(2000))
-								//		)
+
 						)
 						.uri(httpUri))
 				.build();
